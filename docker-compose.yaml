@@ -28,7 +28,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
     networks:
-      - prod
+      - bot_tageveryone
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER" ]
       interval: 10s
@@ -41,5 +41,5 @@ volumes:
     driver: local
 
 networks:
-  prod:
+  bot_tageveryone:
     driver: bridge

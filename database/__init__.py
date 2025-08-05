@@ -11,3 +11,8 @@ Session = sessionmaker(engine)
 
 class Base(DeclarativeBase):
     pass
+
+def init_db():
+    from database.users import User
+    from database.chats import Chat
+    Base.metadata.create_all(engine)

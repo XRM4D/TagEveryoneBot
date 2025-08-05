@@ -7,7 +7,11 @@ import os
 # Telegram
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 if not BOT_TOKEN:
-    raise ValueError('Missing required environment variable: BOT_TOKEN')
+    raise RuntimeError('Missing required environment variable: BOT_TOKEN')
+
+BOT_NAME = os.getenv('BOT_NAME')
+if not BOT_NAME:
+    raise RuntimeError('Missing required environment variable: BOT_NAME')
 
 # Postgres
 POSTGRES_USER = os.getenv('POSTGRES_USER')
