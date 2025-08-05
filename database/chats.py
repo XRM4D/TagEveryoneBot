@@ -11,11 +11,31 @@ class Chat(Base):
     __tablename__ = 'chats'
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(BIGINT, primary_key=True)
-    members = Column(JSON, nullable=True, default='"members": []')
+    members = Column(JSON, nullable=False, default={"members": []})
 
 
     async def get_members(self) -> list[int]:
-        return json.load(self.members).get("members", [])
+        return self.members.get("members", [])
+
+    async def add_member(self, member_id: int) -> None:
+        with Session() as session:
+            chat = session.query(Chat).filter_by(id=self.id).one_or_none()
+            if chat is None:
+                return
+
+            members = chat.members.get("members", [])
+            if member_id not in members:
+                members.append(member_id)
+                chat.members["members"] = members
+
+            session.commit()
+
+
+    @staticmethod
+    async def delete(chat_id: int) -> None:
+        with Session() as session:
+            session.query(Chat).filter(Chat.telegram_id == chat_id).delete(synchronize_session=False)
+            session.commit()
 
     @staticmethod
     async def add(chat: Chat):
