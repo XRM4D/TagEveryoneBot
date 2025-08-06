@@ -23,12 +23,15 @@ class Chat(Base):
             if chat is None:
                 return
 
-            members = chat.members.get("members", [])
-            if member_id not in members:
-                members.append(member_id)
-                chat.members["members"] = members
+            current = chat.members.get("members")
+            if current is None:
+                chat.members["members"] = []
+                current = chat.members["members"]
 
-            session.commit()
+            if member_id not in current:
+                current.append(member_id)
+                chat.members["members"] = current
+                session.commit()
 
 
     @staticmethod

@@ -10,7 +10,21 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(BIGINT, nullable=False, primary_key=True)
     username = Column(VARCHAR(255), nullable=True)
-    assigned_chats = Column(JSON, nullable=False, default='"chats": []')
+    assigned_chats = Column(JSON, nullable=False, default={"chats": []})
+
+
+    def add_chat(self, chat_id: int) -> None:
+        with Session() as session:
+            user = session.query(User).filter(User.telegram_id == self.telegram_id).one_or_none()
+            if user is None:
+                raise ValueError(f"No user found with telegram_id {self.telegram_id}")
+
+            if user.assigned_chats is None or "chats" not in user.assigned_chats:
+                user.assigned_chats = {"chats": []}
+
+            if chat_id not in user.assigned_chats["chats"]:
+                user.assigned_chats["chats"].append(chat_id)
+                session.commit()
 
 
     @staticmethod
